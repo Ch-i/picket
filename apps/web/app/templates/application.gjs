@@ -7,18 +7,32 @@ const high = demo.alerts.filter((a) => a.severity === 1).length;
   {{pageTitle "Picket — IDS Console"}}
 
   <header class="picket-header">
-    <h1>Picket <span class="muted">· pfSense IDS/IPS</span></h1>
+    <div class="picket-brand">
+      <h1>Picket</h1>
+      <span class="sub">pfSense IDS/IPS — Suricata + Snort</span>
+    </div>
     <div class="picket-kpis">
-      <span>{{demo.alerts.length}} alerts</span>
-      <span class="hi">{{high}} high</span>
-      <span>{{demo.rules.length}} rules</span>
-      <span>{{demo.interfaces.length}} interfaces</span>
+      <div class="kpi"><span class="num">{{demo.alerts.length}}</span><span class="cl-lbl">alerts</span></div>
+      <div class="kpi"><span class="num hi">{{high}}</span><span class="cl-lbl">high</span></div>
+      <div class="kpi"><span class="num">{{demo.rules.length}}</span><span class="cl-lbl">rules</span></div>
+      <div class="kpi"><span class="num">{{demo.interfaces.length}}</span><span class="cl-lbl">interfaces</span></div>
+      <div class="picket-status"><span class="dot"></span>monitoring</div>
     </div>
   </header>
 
-  <main class="picket-main">
-    <picket-alert-table></picket-alert-table>
-  </main>
+  <div class="picket-grid">
+    <section class="picket-stream">
+      <div class="picket-stream-head">
+        <span class="cl-lbl">Live alert feed</span>
+        <span class="cl-lbl">newest first</span>
+      </div>
+      <picket-alert-table></picket-alert-table>
+    </section>
+
+    <aside class="picket-console">
+      <picket-assistant></picket-assistant>
+    </aside>
+  </div>
 
   {{outlet}}
 </template>

@@ -1,59 +1,166 @@
-/* Ember supports plain CSS out of the box. More info: https://cli.emberjs.com/release/advanced-use/stylesheets/ */
+/* Picket — cartographic-instrument design language (CyberneticHooke cl-* tokens, dark "paper" theme). */
 
 :root {
   color-scheme: dark;
+
+  /* surfaces */
+  --cl-paper: #0a0d12;
+  --cl-paper-deep: #04060a;
+  --cl-panel: #0d1117;
+  --cl-panel-2: #11161d;
+
+  /* ink */
+  --cl-ink: #e8e2d6;
+  --cl-ink-dim: #a89f8a;
+  --cl-ink-faint: #6a6357;
+
+  /* lines / cartographic neatline */
+  --cl-neatline: #2b3340;
+  --cl-neatline-bright: #c6bfb0;
+  --cl-rule: #1a212b;
+
+  /* signals */
+  --cl-signal: #34a3c4;
+  --cl-signal-on: #6cd4f2;
+  --cl-signal-warn: #d27238;
+  --cl-ok: #87a866;
+  --cl-alert: #d4543c;
+  --cl-water: #5d8fc0;
+
+  /* type */
+  --cl-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, "Cascadia Code", Consolas, monospace;
+  --cl-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --cl-serif-it: "Source Serif 4", "Iowan Old Style", Charter, Georgia, serif;
+
+  /* motion */
+  --cl-dur: 0.25s;
+  --cl-ease: cubic-bezier(0.19, 1, 0.22, 1);
+
+  /* tracking */
+  --cl-track-lbl: 0.08em;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background: #0a0d12;
-  color: #d7dde5;
-  font:
-    14px/1.5 ui-sans-serif,
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    sans-serif;
+  background: var(--cl-paper);
+  color: var(--cl-ink);
+  font: 14px/1.5 var(--cl-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
+/* tiny instrument label */
+.cl-lbl {
+  font: 500 10px/1 var(--cl-mono);
+  letter-spacing: var(--cl-track-lbl);
+  text-transform: uppercase;
+  color: var(--cl-ink-faint);
+}
+
+/* ---- top instrument bar ---- */
 .picket-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 22px;
-  border-bottom: 1px solid #1f2937;
-  background: #0d1117;
+  padding: 12px 20px;
+  border-bottom: 0.5px solid var(--cl-neatline);
+  background: linear-gradient(180deg, var(--cl-panel), var(--cl-paper));
 }
 
-.picket-header h1 {
+.picket-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.picket-brand h1 {
   margin: 0;
-  font-size: 17px;
-  font-weight: 700;
+  font: 600 15px/1 var(--cl-sans);
   letter-spacing: 0.01em;
 }
 
-.picket-header .muted {
-  color: #6b7685;
-  font-weight: 400;
+.picket-brand .sub {
+  font: 400 italic 13px/1 var(--cl-serif-it);
+  color: var(--cl-ink-dim);
 }
 
 .picket-kpis {
   display: flex;
-  gap: 14px;
-  font:
-    12px ui-monospace,
-    SFMono-Regular,
-    Menlo,
-    monospace;
-  color: #8b97a6;
+  gap: 18px;
+  align-items: center;
 }
 
-.picket-kpis .hi {
-  color: #f85149;
+.picket-kpis .kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-end;
 }
 
-.picket-main {
-  padding: 22px;
-  max-width: 1200px;
+.picket-kpis .num {
+  font: 600 14px/1 var(--cl-mono);
+  color: var(--cl-ink);
+}
+
+.picket-kpis .num.hi {
+  color: var(--cl-alert);
+}
+
+.picket-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 500 10px/1 var(--cl-mono);
+  letter-spacing: var(--cl-track-lbl);
+  text-transform: uppercase;
+  color: var(--cl-signal-on);
+}
+
+.picket-status .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--cl-signal-on);
+  box-shadow: 0 0 8px var(--cl-signal-on);
+  animation: cl-pulse 2.4s var(--cl-ease) infinite;
+}
+
+@keyframes cl-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* ---- two-pane instrument layout ---- */
+.picket-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 0;
+  height: calc(100vh - 49px);
+}
+
+.picket-stream {
+  padding: 18px 20px;
+  overflow: auto;
+  border-right: 0.5px solid var(--cl-neatline);
+}
+
+.picket-stream-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 0 0 12px;
+}
+
+.picket-console {
+  min-height: 0;
+  background: var(--cl-paper-deep);
+}
+
+@media (max-width: 900px) {
+  .picket-grid { grid-template-columns: 1fr; height: auto; }
+  .picket-console { height: 70vh; }
 }
