@@ -1,0 +1,20 @@
+# Reference systemd unit. `./bootstrap.sh --service` generates this with the real
+# paths/user substituted; this copy documents the shape. Install to
+# /etc/systemd/system/picket.service, then: systemctl enable --now picket
+[Unit]
+Description=Picket — pfSense IDS/IPS console
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=picket
+WorkingDirectory=/opt/picket
+# Holds ANTHROPIC_API_KEY + pfSense settings. The leading '-' makes it optional (demo runs without).
+EnvironmentFile=-/opt/picket/packages/backend/.env
+ExecStart=/usr/bin/node /opt/picket/packages/backend/dist/server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+# Boot Picket on any box with Docker:
+#   cp packages/backend/.env.example packages/backend/.env   # optional — add ANTHROPIC_API_KEY for live mode
+#   docker compose up -d --build
+# Then open http://<box>:8200/  (demo until a key is supplied; live thereafter).
+services:
+  picket:
+    build: .
+    image: picket:local
+    container_name: picket
+    ports:
+      - "8200:8200"
+    env_file:
+      # Holds ANTHROPIC_API_KEY + pfSense settings. Optional — the demo runs without it.
+      - path: packages/backend/.env
+        required: false
+    restart: unless-stopped

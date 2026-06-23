@@ -67,6 +67,27 @@ export PICKET_PFSENSE_KEY=…           # pfSense REST API token
 export PICKET_ALLOW_WRITES=1          # opt in to mutations
 ```
 
+## Boot from zero
+
+Hand an empty box (Linux / WSL2, ~2 GB RAM) a single command and get a running console.
+
+**Docker (any box with Docker):**
+```bash
+git clone https://github.com/Ch-i/picket.git && cd picket
+cp packages/backend/.env.example packages/backend/.env   # optional — add ANTHROPIC_API_KEY for live mode
+docker compose up -d --build                              # http://<box>:8200
+```
+
+**Bare metal / WSL (no Docker):** the bootstrap installs Node 22 + pnpm + git if missing, clones, builds, seeds `.env`, and runs:
+```bash
+curl -fsSL https://raw.githubusercontent.com/Ch-i/picket/main/bootstrap.sh | bash
+#   ./bootstrap.sh --service   # install + enable a systemd service instead of running foreground
+```
+
+Either way the box serves the **demo with no secrets**; it flips to **live Claude** the moment
+`packages/backend/.env` carries an `ANTHROPIC_API_KEY`, and to a **live pfSense feed** when you set
+`PICKET_BACKEND` (see below). Secrets live only in that `.env` — never in the image or the repo.
+
 ## Live mode — the ll0d backend (real Claude)
 
 The public demo runs a **scripted agent over fixtures, with no API key** (so it's safe on
