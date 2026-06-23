@@ -67,7 +67,7 @@ export PICKET_PFSENSE_KEY=…           # pfSense REST API token
 export PICKET_ALLOW_WRITES=1          # opt in to mutations
 ```
 
-### Use it from Claude Desktop / Claude Code
+### Use it from any MCP client
 
 ```json
 {
