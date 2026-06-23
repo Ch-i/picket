@@ -1,0 +1,12 @@
+node_modules/
+dist/
+tmp/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+# ember
+apps/web/dist/
+apps/web/tmp/
+coverage/

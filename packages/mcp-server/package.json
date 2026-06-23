@@ -1,0 +1,23 @@
+{
+  "name": "@picket/mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing pfSense Suricata/Snort management as LLM tools.",
+  "type": "module",
+  "bin": {
+    "picket-mcp": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "@picket/client": "workspace:*",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@picket/client",
+  "version": "0.1.0",
+  "description": "Pluggable IDS adapter for pfSense (Suricata + Snort): demo fixtures or live REST.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./fixtures/demo.json": "./fixtures/demo.json"
+  },
+  "files": ["dist", "fixtures"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
