@@ -67,6 +67,38 @@ export PICKET_PFSENSE_KEY=…           # pfSense REST API token
 export PICKET_ALLOW_WRITES=1          # opt in to mutations
 ```
 
+## Live mode — the ll0d backend (real Claude)
+
+The public demo runs a **scripted agent over fixtures, with no API key** (so it's safe on
+GitHub Pages). To run the *real* assistant — Claude driving the MCP tools against a live
+pfSense — use the backend, which runs on a box you control (e.g. `ll0d`, where the firewall
+is wired):
+
+```bash
+cd packages/backend
+cp .env.example .env        # then fill in ANTHROPIC_API_KEY (lives ONLY here)
+cd ../.. && pnpm build
+pnpm serve                  # http://localhost:8200  — serves the console + /api/chat
+```
+
+```
+Browser ──/api/chat──▶ @picket/backend ──reads ANTHROPIC_API_KEY from .env (gitignored)
+                            │  Claude tool-use loop (manual, write-gated)
+                            ▼  spawns + speaks MCP (stdio)
+                      @picket/mcp ──▶ @picket/client ──▶ demo fixtures | live pfSense
+```
+
+- **The key never leaves the backend** — not committed, not bundled to the browser, not on Pages.
+- The frontend auto-detects the backend (`GET /api/health`) and switches from the demo agent to
+  `/api/chat`; with no backend it stays in the safe demo.
+- **Writes stay human-gated end to end:** Claude is instructed to dry-run any rule toggle /
+  suppression and wait for your explicit approval, and the adapter still requires
+  `PICKET_ALLOW_WRITES=1` to mutate the box.
+- Point at a real firewall by setting `PICKET_BACKEND=pfsense` + `PICKET_PFSENSE_URL/KEY` in the
+  same `.env`.
+
+Model defaults to `claude-opus-4-8` with adaptive thinking (override via `PICKET_MODEL` / `PICKET_EFFORT`).
+
 ### Use it from any MCP client
 
 ```json
@@ -83,11 +115,14 @@ export PICKET_ALLOW_WRITES=1          # opt in to mutations
 |---|---|
 | `@picket/client` | pfSense IDS adapter — demo fixtures or live REST |
 | `@picket/mcp` | MCP server exposing the IDS tools |
-| `@picket/web` | Ember + Lit analyst console *(in progress)* |
+| `@picket/backend` | Claude tool-use loop over MCP + static host (the `ll0d` live instance) |
+| `picket-web` | Ember Octane + Lit analyst console |
 
 ## Status
 
 - [x] Domain model + pluggable adapter (demo + REST)
 - [x] MCP server with read tools + guarded write tools
-- [ ] Ember Octane shell + Lit components (alert table, rule editor)
-- [ ] In-app LLM assistant wired to the MCP tools
+- [x] Ember Octane shell + Lit alert table
+- [x] In-app LLM assistant — demo agent (Pages) + live Claude tool-use loop via the backend
+- [ ] Live pfSense REST adapter validated against a real box
+- [ ] Rule-editor Lit component

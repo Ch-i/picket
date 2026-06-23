@@ -44,6 +44,7 @@ export class PicketAssistant extends LitElement {
     entries: { state: true },
     working: { state: true },
     draft: { state: true },
+    live: { state: true },
   };
 
   static styles = css`
@@ -275,10 +276,37 @@ export class PicketAssistant extends LitElement {
     this.entries = [];
     this.working = false;
     this.draft = '';
+    this.live = false; // flips to true if a backend with a key is reachable
+    this.sessionId = (globalThis.crypto?.randomUUID?.() ?? `s-${Date.now()}`);
+  }
+
+  async connectedCallback() {
+    super.connectedCallback();
+    // Probe for the ll0d backend; if it's there with a key, go live (real Claude).
+    try {
+      const r = await fetch('/api/health', { cache: 'no-store' });
+      if (r.ok) {
+        const h = await r.json();
+        this.live = !!h.hasKey;
+      }
+    } catch {
+      this.live = false; // static deploy (e.g. GitHub Pages) → demo agent
+    }
   }
 
   #push(entry) {
     this.entries = [...this.entries, entry];
+  }
+
+  async #liveSteps(message) {
+    const r = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ sessionId: this.sessionId, message }),
+    });
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+    return data.steps;
   }
 
   async #send(text) {
@@ -287,9 +315,15 @@ export class PicketAssistant extends LitElement {
     this.draft = '';
     this.#push({ type: 'user', text: msg });
     this.working = true;
-    await wait(280);
-    for (const step of runAgent(msg)) {
-      await wait(step.kind === 'tool' ? 520 : 420);
+    await wait(220);
+    let steps;
+    try {
+      steps = this.live ? await this.#liveSteps(msg) : runAgent(msg);
+    } catch (e) {
+      steps = [{ kind: 'say', text: `⚠ ${e?.message ?? e}` }];
+    }
+    for (const step of steps) {
+      await wait(step.kind === 'tool' ? 480 : 360);
       this.#push({ type: step.kind, ...step });
     }
     this.working = false;
@@ -358,7 +392,7 @@ export class PicketAssistant extends LitElement {
         <span class="title">Assistant</span>
         <div class="meta">
           <span>MCP · 7 tools</span>
-          <span class="live"><span class="dot"></span>demo</span>
+          <span class="live"><span class="dot"></span>${this.live ? 'live' : 'demo'}</span>
         </div>
       </header>
 

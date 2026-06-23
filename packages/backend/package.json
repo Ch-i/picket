@@ -1,0 +1,24 @@
+{
+  "name": "@picket/backend",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Picket backend (ll0d): Claude tool-use loop over the MCP IDS tools + static host. Holds ANTHROPIC_API_KEY in a local .env.",
+  "type": "module",
+  "bin": {
+    "picket-backend": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "dev": "tsc -p tsconfig.json --watch"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.105.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@picket/mcp": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}
