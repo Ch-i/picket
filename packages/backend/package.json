@@ -15,6 +15,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
+    "@picket/client": "workspace:*",
     "@picket/mcp": "workspace:*"
   },
   "devDependencies": {

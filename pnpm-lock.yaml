@@ -183,6 +183,9 @@ importers:
       '@modelcontextprotocol/sdk':
         specifier: ^1.29.0
         version: 1.29.0(zod@3.25.76)
+      '@picket/client':
+        specifier: workspace:*
+        version: link:../pfsense-client
       '@picket/mcp':
         specifier: workspace:*
         version: link:../mcp-server

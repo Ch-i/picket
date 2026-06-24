@@ -4,6 +4,19 @@
     { "name": "lan", "descr": "LAN (igb1)", "engine": "suricata", "enabled": true, "blockOffenders": false, "alerts24h": 37 },
     { "name": "dmz", "descr": "DMZ (igb2)", "engine": "snort", "enabled": true, "blockOffenders": true, "alerts24h": 88 }
   ],
+  "hosts": [
+    { "ip": "192.168.1.1", "mac": "00:90:7f:3a:11:02", "hostname": "pfsense.lan", "vendor": "Netgate", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:59:30Z", "source": "demo", "kind": "firewall" },
+    { "ip": "192.168.1.10", "mac": "00:11:32:6b:9c:41", "hostname": "vault-nas", "vendor": "Synology", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:58:10Z", "source": "demo", "kind": "nas" },
+    { "ip": "192.168.1.20", "mac": "3c:07:54:aa:18:e0", "hostname": "jhoseph-mbp", "vendor": "Apple", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:59:02Z", "source": "demo", "kind": "laptop" },
+    { "ip": "192.168.1.21", "mac": "00:11:d8:42:7a:5c", "hostname": "ll0dog", "vendor": "ASUS", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:59:20Z", "source": "demo", "kind": "server" },
+    { "ip": "192.168.1.30", "mac": "d0:52:a8:11:6f:90", "hostname": "pixel-9", "vendor": "Google", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:55:40Z", "source": "demo", "kind": "phone" },
+    { "ip": "192.168.1.31", "mac": "ac:87:a3:00:c4:2d", "hostname": "ipad-studio", "vendor": "Apple", "iface": "lan", "state": "stale", "lastSeen": "2026-06-24T12:41:11Z", "source": "demo", "kind": "tablet" },
+    { "ip": "192.168.1.40", "mac": "00:17:88:2a:bb:01", "hostname": "hue-bridge", "vendor": "Philips Hue", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:57:33Z", "source": "demo", "kind": "iot" },
+    { "ip": "192.168.1.41", "mac": "24:6f:28:9a:0d:7e", "hostname": "esp-sensor-01", "vendor": "Espressif (IoT)", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:58:50Z", "source": "demo", "kind": "iot" },
+    { "ip": "192.168.1.42", "mac": "b8:27:8a:55:13:9f", "hostname": "sonos-living", "vendor": "Sonos", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:54:09Z", "source": "demo", "kind": "iot" },
+    { "ip": "192.168.1.50", "mac": "b8:27:eb:7c:3a:44", "hostname": "rpi-monitor", "vendor": "Raspberry Pi", "iface": "lan", "state": "online", "lastSeen": "2026-06-24T12:59:25Z", "source": "demo", "kind": "server" },
+    { "ip": "192.168.1.199", "mac": "3c:5a:b4:0f:e1:77", "vendor": null, "iface": "lan", "state": "stale", "lastSeen": "2026-06-24T12:33:02Z", "source": "demo", "kind": "unknown" }
+  ],
   "rules": [
     { "engine": "suricata", "gid": 1, "sid": 2010935, "rev": 3, "enabled": true, "action": "alert", "msg": "ET SCAN Suspicious inbound to mySQL port 3306", "category": "attempted-recon", "ruleset": "ET OPEN", "references": ["url,doc.emergingthreats.net/2010935"] },
     { "engine": "suricata", "gid": 1, "sid": 2024897, "rev": 4, "enabled": true, "action": "drop", "msg": "ET MALWARE Cobalt Strike Beacon Observed", "category": "trojan-activity", "ruleset": "ET OPEN", "references": ["url,www.cobaltstrike.com"] },

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { createAdapter, type IdsAdapter } from "@picket/client";
+import { createAdapter, discoverHosts, type IdsAdapter } from "@picket/client";
 
 const engine = z.enum(["suricata", "snort"]);
 const severity = z.union([z.literal(1), z.literal(2), z.literal(3)]);
@@ -77,6 +77,17 @@ export function registerTools(server: McpServer, adapter: IdsAdapter = createAda
       },
     },
     async (args) => json(await adapter.stats(args)),
+  );
+
+  server.registerTool(
+    "net_list_hosts",
+    {
+      title: "Enumerate LAN hosts",
+      description:
+        "Enumerate machines on the local network (the 'radar'): IP, MAC, vendor, hostname, and state. Uses the box's ARP/neighbor table, plus the firewall's ARP + DHCP leases when a live pfSense is configured. Use this to answer 'what's on my network' or flag unknown/new devices.",
+      inputSchema: {},
+    },
+    async () => json(await discoverHosts()),
   );
 
   // --- writes: dry-run unless confirm:true, and adapter still gates on env ---

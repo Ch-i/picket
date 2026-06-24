@@ -3,6 +3,7 @@ export { type IdsAdapter, WritesDisabledError, writesEnabled } from "./adapter.j
 export { DemoAdapter } from "./demo-adapter.js";
 export { PfSenseRestAdapter, type RestConfig } from "./rest-adapter.js";
 export { SshEveAdapter, type SshConfig } from "./ssh-eve-adapter.js";
+export { discoverHosts, localNeighbors, vendorOf } from "./net-scan.js";
 
 import type { IdsAdapter } from "./adapter.js";
 import { DemoAdapter } from "./demo-adapter.js";

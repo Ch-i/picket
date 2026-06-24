@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { extname, join, normalize } from "node:path";
 import Anthropic from "@anthropic-ai/sdk";
+import { discoverHosts } from "@picket/client";
 import { connectMcp } from "./mcp.js";
 import { chat } from "./agent.js";
 
@@ -68,6 +69,14 @@ const server = createServer(async (req, res) => {
       writes,
       tools: mcp.tools.map((t) => t.name),
     });
+  }
+
+  if (url.pathname === "/api/hosts") {
+    try {
+      return json(res, 200, { hosts: await discoverHosts() });
+    } catch (e) {
+      return json(res, 500, { error: String((e as Error)?.message ?? e) });
+    }
   }
 
   if (url.pathname === "/api/chat" && req.method === "POST") {

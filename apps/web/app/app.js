@@ -10,6 +10,7 @@ import setupInspector from '@embroider/legacy-inspector-support/ember-source-4.1
 // Register Lit web components (custom elements) used across Ember templates.
 import './components/alert-table';
 import './components/assistant-panel';
+import './components/radar';
 
 if (macroCondition(isDevelopingApp())) {
   importSync('./deprecation-workflow');

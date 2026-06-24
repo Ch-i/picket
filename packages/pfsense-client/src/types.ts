@@ -84,3 +84,16 @@ export interface RuleQuery {
   q?: string;
   limit?: number;
 }
+
+/** A device seen on the local network — the "radar" inventory. */
+export interface Host {
+  ip: string;
+  mac?: string;
+  hostname?: string;
+  vendor?: string;
+  iface?: string;
+  state: "online" | "stale" | "offline";
+  lastSeen: string; // ISO
+  source: "neighbor" | "arp" | "dhcp" | "demo";
+  kind?: string; // router | firewall | nas | server | laptop | phone | tablet | printer | iot | unknown
+}

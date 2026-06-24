@@ -27,6 +27,12 @@ const high = demo.alerts.filter((a) => a.severity === 1).length;
         <span class="cl-lbl">newest first</span>
       </div>
       <picket-alert-table></picket-alert-table>
+
+      <div class="picket-stream-head" style="margin-top:24px">
+        <span class="cl-lbl">Network radar</span>
+        <span class="cl-lbl">who's on the LAN</span>
+      </div>
+      <picket-radar></picket-radar>
     </section>
 
     <aside class="picket-console">
