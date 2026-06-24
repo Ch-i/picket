@@ -16,6 +16,10 @@ Changes are human-gated:
 
 Keep responses tight. Don't narrate routine tool calls; state what you found and what you recommend.`;
 
+// When authenticating with a Claude Code subscription token, the API requires the
+// first system block to carry the Claude Code identity.
+const CLAUDE_CODE_IDENTITY = "You are Claude Code, Anthropic's official CLI for Claude.";
+
 export interface Step {
   kind: "say" | "tool";
   text?: string;
@@ -37,9 +41,18 @@ export async function chat(
   mcp: McpBridge,
   sessionId: string,
   userMessage: string,
+  oauth = false,
 ): Promise<Step[]> {
   const messages = sessions.get(sessionId) ?? [];
   messages.push({ role: "user", content: userMessage });
+
+  // OAuth (Claude Code subscription) needs the identity as the first system block.
+  const system = oauth
+    ? [
+        { type: "text", text: CLAUDE_CODE_IDENTITY },
+        { type: "text", text: SYSTEM },
+      ]
+    : SYSTEM;
 
   const steps: Step[] = [];
 
@@ -47,7 +60,7 @@ export async function chat(
     const req = {
       model: MODEL,
       max_tokens: 16000,
-      system: SYSTEM,
+      system,
       thinking: { type: "adaptive" },
       output_config: { effort: EFFORT },
       tools: mcp.tools,

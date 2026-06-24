@@ -7,6 +7,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { discoverHosts } from "@picket/client";
 import { connectMcp } from "./mcp.js";
 import { chat } from "./agent.js";
+import { getAuth } from "./auth.js";
 
 // Load .env if present (Node >= 20.12). The key lives here, never in the repo.
 try {
@@ -42,12 +43,18 @@ function json(res: ServerResponse, code: number, obj: unknown) {
 }
 
 const mcp = await connectMcp();
-const hasKey = !!process.env.ANTHROPIC_API_KEY;
-// Construct only when a key exists — the SDK throws at construction otherwise,
-// and we still want /api/health + static hosting to work without one.
-const anthropic = hasKey ? new Anthropic() : null;
 const writes = process.env.PICKET_ALLOW_WRITES === "1";
+const startAuth = await getAuth(); // ANTHROPIC_API_KEY, else a Claude Code login
 console.error(`[picket-backend] MCP tools: ${mcp.tools.map((t) => t.name).join(", ")}`);
+
+function buildClient(auth: NonNullable<Awaited<ReturnType<typeof getAuth>>>): Anthropic {
+  return auth.mode === "key"
+    ? new Anthropic()
+    : new Anthropic({
+        authToken: auth.token,
+        defaultHeaders: { "anthropic-beta": "oauth-2025-04-20" },
+      });
+}
 
 const server = createServer(async (req, res) => {
   const url = new URL(req.url ?? "/", "http://localhost");
@@ -62,10 +69,12 @@ const server = createServer(async (req, res) => {
   }
 
   if (url.pathname === "/api/health") {
+    const auth = await getAuth();
     return json(res, 200, {
       ok: true,
       model: MODEL,
-      hasKey,
+      hasKey: !!auth,
+      authMode: auth?.mode ?? null,
       writes,
       tools: mcp.tools.map((t) => t.name),
     });
@@ -80,7 +89,11 @@ const server = createServer(async (req, res) => {
   }
 
   if (url.pathname === "/api/chat" && req.method === "POST") {
-    if (!hasKey) return json(res, 503, { error: "ANTHROPIC_API_KEY not set on the backend" });
+    const auth = await getAuth();
+    if (!auth)
+      return json(res, 503, {
+        error: "No Claude auth — set ANTHROPIC_API_KEY or log in with the Claude CLI",
+      });
     let body = "";
     for await (const c of req) body += c;
     let parsed: { sessionId?: string; message?: string };
@@ -93,7 +106,7 @@ const server = createServer(async (req, res) => {
     const message = String(parsed.message ?? "").trim();
     if (!message) return json(res, 400, { error: "empty message" });
     try {
-      const steps = await chat(anthropic!, mcp, sessionId, message);
+      const steps = await chat(buildClient(auth), mcp, sessionId, message, auth.mode === "oauth");
       return json(res, 200, { steps });
     } catch (e) {
       console.error(e);
@@ -121,7 +134,7 @@ const server = createServer(async (req, res) => {
 
 server.listen(PORT, () =>
   console.error(
-    `[picket-backend] http://localhost:${PORT}  model=${MODEL}  key=${hasKey ? "set" : "MISSING"}  writes=${writes ? "on" : "off"}`,
+    `[picket-backend] http://localhost:${PORT}  model=${MODEL}  auth=${startAuth?.mode ?? "MISSING"}  writes=${writes ? "on" : "off"}`,
   ),
 );
 
