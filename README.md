@@ -118,6 +118,11 @@ Browser ──/api/chat──▶ @picket/backend ──reads ANTHROPIC_API_KEY f
 - Point at a real firewall by setting `PICKET_BACKEND=pfsense` + `PICKET_PFSENSE_URL/KEY` in the
   same `.env`.
 
+**Auth — two ways:** an `ANTHROPIC_API_KEY`, *or* a **Claude Code subscription login** (no key) —
+run `claude` to log in once and Picket reads its OAuth credential (`~/.claude/.credentials.json`,
+or `PICKET_CLAUDE_CREDS` for another user's), calling the API as Claude Code and refreshing the
+token on expiry. Either way the secret stays on the box.
+
 Model defaults to `claude-opus-4-8` with adaptive thinking (override via `PICKET_MODEL` / `PICKET_EFFORT`).
 
 ### Use it from any MCP client
